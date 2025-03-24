@@ -1,4 +1,4 @@
-package com.github.brunin16.study_api;
+package com.github.brunin16.study_api.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

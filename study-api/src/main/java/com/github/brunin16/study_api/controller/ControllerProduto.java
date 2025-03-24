@@ -1,42 +1,46 @@
-package com.github.brunin16.study_api;
+package com.github.brunin16.study_api.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import org.springframework.web.bind.annotation.RequestBody;
+import com.github.brunin16.study_api.model.Produto;
+import com.github.brunin16.study_api.service.ProdutoService;
+
 @RestController
 @RequestMapping("produtos")
 public class ControllerProduto {
 
+    @Autowired
+    private ProdutoService ps;
+
     @PostMapping()
     public ResponseEntity<Produto> create(@RequestBody Produto produto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(produto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(ps.add(produto));
     }
 
     @PutMapping
-    public ResponseEntity<String> update() {
-        return ResponseEntity.ok().body("Produto Atualizado com sucesso");
+    public ResponseEntity<Produto> update(Produto produto) {
+        return ResponseEntity.ok().body(ps.update(produto));
     }
 
     @GetMapping
     public ResponseEntity<List<Produto>> find() {
-        List<Produto> produtos = new ArrayList<Produto>();
-        produtos.add(new Produto(1l, "maca"));
-        produtos.add(new Produto(2l, "banana"));
-        return ResponseEntity.ok().body(produtos);
+        return ResponseEntity.ok().body(ps.getAll());
     }
 
     @DeleteMapping
-    public ResponseEntity<String> delete() {
+    public ResponseEntity<String> delete(Long id) {
+        ps.delete(id);
         return ResponseEntity.noContent().build();
     }
 }
