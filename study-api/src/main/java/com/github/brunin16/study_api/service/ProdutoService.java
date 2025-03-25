@@ -13,12 +13,10 @@ public class ProdutoService {
     private Long id = 1l;
 
     public Produto get(Long id) {
-        for (Produto produto : produtos) {
-            if (produto.getId() == id) {
-                return produto;
-            }
-        }
-        return null;
+        return produtos.stream()
+                .filter(produto -> produto.getId().equals(id))
+                .findFirst()
+                .orElse(null);
     }
 
     public Produto add(Produto produto) {
@@ -33,17 +31,18 @@ public class ProdutoService {
     }
 
     public void delete(Long id) {
-        for (int i = 0; i < produtos.size(); i++) {
-            if (produtos.get(i).getId() == id) {
-                produtos.remove(i);
-            }
-        }
+        produtos.removeIf(produto -> produto.getId().equals(id));
     }
 
     public Produto update(Produto produto) {
-        Long id = produto.getId();
-        int rId = id.intValue();
-        produtos.get(rId - 1).setName(produto.getName());
-        return produto;
+        return produtos.stream()
+                .filter(p -> p.getId().equals(produto.getId()))
+                .findFirst()
+                .map(p -> {
+                    p.setName(produto.getName());
+                    return p;
+                })
+                .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
     }
+
 }
