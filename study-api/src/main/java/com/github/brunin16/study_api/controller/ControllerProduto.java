@@ -29,24 +29,27 @@ public class ControllerProduto {
         return ResponseEntity.status(HttpStatus.CREATED).body(ps.add(produto));
     }
 
-    @PutMapping
-    public ResponseEntity<Produto> update(Produto produto) {
-        return ResponseEntity.ok().body(ps.update(produto));
+    @PutMapping("{id}")
+    public ResponseEntity<Produto> update(@PathVariable Long id, @RequestBody Produto produto) {
+        Produto updated = ps.update(id, produto);
+        if (updated == null) return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(updated);
     }
-
+    
     @GetMapping
-    public ResponseEntity<List<Produto>> getAll() {
+    public ResponseEntity<List<Produto>> findAll() {
         return ResponseEntity.ok().body(ps.getAll());
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Produto> get(@PathVariable Long id) {
-        return ResponseEntity.ok().body(ps.get(id));
+    public ResponseEntity<Produto> findById(@PathVariable Long id) {
+        return ResponseEntity.ok().body(ps.get(id).get());
     }
 
-    @DeleteMapping
-    public ResponseEntity<String> delete(Long id) {
+    @DeleteMapping("{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
         ps.delete(id);
         return ResponseEntity.noContent().build();
     }
+    
 }

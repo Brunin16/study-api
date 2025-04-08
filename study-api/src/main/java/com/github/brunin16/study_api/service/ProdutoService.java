@@ -1,48 +1,41 @@
 package com.github.brunin16.study_api.service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.github.brunin16.study_api.model.Produto;
+import com.github.brunin16.study_api.repository.ProdutoRepository;
 
 @Service
 public class ProdutoService {
-    private List<Produto> produtos = new ArrayList<>();
-    private Long id = 1l;
+    
+    @Autowired
+    private ProdutoRepository produtoRepository;
 
-    public Produto get(Long id) {
-        return produtos.stream()
-                .filter(produto -> produto.getId().equals(id))
-                .findFirst()
-                .orElse(null);
+    public Optional<Produto> get(Long id) {
+        return produtoRepository.findById(id);
     }
 
     public Produto add(Produto produto) {
-        produto.setId(id);
-        id += 1;
-        produtos.add(produto);
-        return produto;
+        return produtoRepository.save(produto);
     }
 
     public List<Produto> getAll() {
-        return produtos;
+        return produtoRepository.findAll();
     }
 
     public void delete(Long id) {
-        produtos.removeIf(produto -> produto.getId().equals(id));
-    }
+        Produto produto = get(id).orElseThrow(() -> new RuntimeException("Produto não encontrado"));
+        produtoRepository.delete(produto);
+    }    
 
-    public Produto update(Produto produto) {
-        return produtos.stream()
-                .filter(p -> p.getId().equals(produto.getId()))
-                .findFirst()
-                .map(p -> {
-                    p.setName(produto.getName());
-                    return p;
-                })
-                .orElseThrow(() -> new RuntimeException("Produto não encontrado"));
+    public Produto update(Long id, Produto produto) {
+        Produto old = get(id).orElseThrow(() -> new RuntimeException("Produto não encontrado"));
+        produto.setId(id); // garante que vai atualizar o registro correto
+        return add(produto); // reutiliza método de salvar
     }
-
+    
 }
