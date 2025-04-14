@@ -2,6 +2,7 @@ package com.github.brunin16.study_api.controller;
 
 import java.util.List;
 
+import org.apache.catalina.connector.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.github.brunin16.study_api.dto.ProdutoRequestCreate;
+import com.github.brunin16.study_api.dto.ProdutoRequestUpdate;
 import com.github.brunin16.study_api.model.Produto;
 import com.github.brunin16.study_api.service.ProdutoService;
 
@@ -31,10 +33,12 @@ public class ControllerProduto {
         return  ResponseEntity.status(201).body(produto);
     }
 
-    @PutMapping
-    public ResponseEntity<Produto> update() {
-        Produto produto = new Produto();
-        return  ResponseEntity.status(200).body(produto);
+    @PutMapping("({id})")
+    public ResponseEntity<Produto> update(@PathVariable Long id,@RequestBody ProdutoRequestUpdate dto) {
+        return produtoService.update(id, dto)
+        .map( produto -> {
+         return ResponseEntity.status(200).body(produto);
+        }).orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping

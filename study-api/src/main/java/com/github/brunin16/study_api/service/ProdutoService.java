@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.github.brunin16.study_api.dto.ProdutoRequestCreate;
+import com.github.brunin16.study_api.dto.ProdutoRequestUpdate;
 import com.github.brunin16.study_api.model.Produto;
 import com.github.brunin16.study_api.repository.ProdutoRepository;
 
@@ -31,6 +32,16 @@ public class ProdutoService {
 
         if (opt.isPresent()) {
             return opt.get();
+        }
+        return null;
+    }
+    public Optional<Produto> update(Long id,ProdutoRequestUpdate dto){
+        if(produtoRepository.existsById(id)){
+            return produtoRepository.findById(id)
+            .map(produto -> {
+                produto.setName(dto.getNome());
+                return produtoRepository.save(produto);
+            });
         }
         return null;
     }
