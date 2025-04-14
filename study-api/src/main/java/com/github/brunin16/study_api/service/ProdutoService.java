@@ -15,27 +15,21 @@ public class ProdutoService {
     @Autowired
     private ProdutoRepository produtoRepository;
 
-    public Optional<Produto> get(Long id) {
-        return produtoRepository.findById(id);
-    }
-
-    public Produto add(Produto produto) {
+       public Produto save(Produto produto) {        
         return produtoRepository.save(produto);
     }
 
-    public List<Produto> getAll() {
+    public List<Produto> findAll() {
         return produtoRepository.findAll();
     }
 
-    public void delete(Long id) {
-        Produto produto = get(id).orElseThrow(() -> new RuntimeException("Produto não encontrado"));
-        produtoRepository.delete(produto);
-    }    
+    public Produto findById(Long id) {
+        Optional<Produto> opt = produtoRepository.findById(id);
 
-    public Produto update(Long id, Produto produto) {
-        Produto old = get(id).orElseThrow(() -> new RuntimeException("Produto não encontrado"));
-        produto.setId(id); // garante que vai atualizar o registro correto
-        return add(produto); // reutiliza método de salvar
+        if (opt.isPresent()) {
+            return opt.get();
+        }
+        return null;
     }
     
 }

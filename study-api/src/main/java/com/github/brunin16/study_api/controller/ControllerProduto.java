@@ -3,7 +3,6 @@ package com.github.brunin16.study_api.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,34 +21,35 @@ import com.github.brunin16.study_api.service.ProdutoService;
 public class ControllerProduto {
 
     @Autowired
-    private ProdutoService ps;
+    private ProdutoService produtoService;
 
-    @PostMapping()
-    public ResponseEntity<Produto> create(@RequestBody Produto produto) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(ps.add(produto));
+    @PostMapping
+    public ResponseEntity<Produto> create(@RequestBody Produto request) {
+        Produto produto = produtoService.save(request);
+
+        return  ResponseEntity.status(201).body(produto);
     }
 
-    @PutMapping("{id}")
-    public ResponseEntity<Produto> update(@PathVariable Long id, @RequestBody Produto produto) {
-        Produto updated = ps.update(id, produto);
-        if (updated == null) return ResponseEntity.notFound().build();
-        return ResponseEntity.ok(updated);
+    @PutMapping
+    public ResponseEntity<Produto> update() {
+        Produto produto = new Produto();
+        return  ResponseEntity.status(200).body(produto);
     }
-    
+
     @GetMapping
     public ResponseEntity<List<Produto>> findAll() {
-        return ResponseEntity.ok().body(ps.getAll());
+        return ResponseEntity.ok(produtoService.findAll());
     }
 
     @GetMapping("{id}")
     public ResponseEntity<Produto> findById(@PathVariable Long id) {
-        return ResponseEntity.ok().body(ps.get(id).get());
+        Produto produto = produtoService.findById(id);
+        return ResponseEntity.status(200).body(produto);
     }
 
-    @DeleteMapping("{id}")
-    public ResponseEntity<Void> delete(@PathVariable Long id) {
-        ps.delete(id);
-        return ResponseEntity.noContent().build();
+    @DeleteMapping
+    public ResponseEntity<Void> delete() {
+        return ResponseEntity.status(204).build();
     }
     
 }
