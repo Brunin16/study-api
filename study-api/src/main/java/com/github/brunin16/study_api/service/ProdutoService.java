@@ -17,8 +17,8 @@ public class ProdutoService {
     private ProdutoRepository produtoRepository;
 
        public Produto save(ProdutoRequestCreate dto) {  
-        
         Produto produto = new Produto();
+        produto.setName(dto.getNome());
         return produtoRepository.save(produto);
     }
 

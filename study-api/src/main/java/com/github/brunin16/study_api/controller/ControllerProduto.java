@@ -25,8 +25,8 @@ public class ControllerProduto {
     private ProdutoService produtoService;
 
     @PostMapping
-    public ResponseEntity<Produto> create(@RequestBody ProdutoRequestCreate request) {
-        Produto produto = produtoService.save(request);
+    public ResponseEntity<Produto> create(@RequestBody ProdutoRequestCreate dto) {
+        Produto produto = produtoService.save(dto);
 
         return  ResponseEntity.status(201).body(produto);
     }
