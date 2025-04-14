@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.github.brunin16.study_api.dto.ProdutoRequestCreate;
 import com.github.brunin16.study_api.model.Produto;
 import com.github.brunin16.study_api.service.ProdutoService;
 
@@ -24,7 +25,7 @@ public class ControllerProduto {
     private ProdutoService produtoService;
 
     @PostMapping
-    public ResponseEntity<Produto> create(@RequestBody Produto request) {
+    public ResponseEntity<Produto> create(@RequestBody ProdutoRequestCreate request) {
         Produto produto = produtoService.save(request);
 
         return  ResponseEntity.status(201).body(produto);

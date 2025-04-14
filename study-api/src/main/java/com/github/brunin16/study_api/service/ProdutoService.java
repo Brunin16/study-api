@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.github.brunin16.study_api.dto.ProdutoRequestCreate;
 import com.github.brunin16.study_api.model.Produto;
 import com.github.brunin16.study_api.repository.ProdutoRepository;
 
@@ -15,7 +16,7 @@ public class ProdutoService {
     @Autowired
     private ProdutoRepository produtoRepository;
 
-       public Produto save(Produto produto) {        
+       public Produto save(ProdutoRequestCreate produto) {        
         return produtoRepository.save(produto);
     }
 
