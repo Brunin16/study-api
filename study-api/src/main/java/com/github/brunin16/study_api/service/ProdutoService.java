@@ -13,11 +13,11 @@ import com.github.brunin16.study_api.repository.ProdutoRepository;
 
 @Service
 public class ProdutoService {
-    
+
     @Autowired
     private ProdutoRepository produtoRepository;
 
-       public Produto save(ProdutoRequestCreate dto) {  
+    public Produto save(ProdutoRequestCreate dto) {
         Produto produto = new Produto();
         produto.setName(dto.getNome());
         return produtoRepository.save(produto);
@@ -27,23 +27,27 @@ public class ProdutoService {
         return produtoRepository.findAll();
     }
 
-    public Produto findById(Long id) {
-        Optional<Produto> opt = produtoRepository.findById(id);
+    public Optional<Produto> findById(Long id) {
+        return produtoRepository.findById(id);
+    }
 
-        if (opt.isPresent()) {
-            return opt.get();
-        }
-        return null;
-    }
-    public Optional<Produto> update(Long id,ProdutoRequestUpdate dto){
-        if(produtoRepository.existsById(id)){
+    public Optional<Produto> update(Long id, ProdutoRequestUpdate dto) {
+        if (produtoRepository.existsById(id)) {
             return produtoRepository.findById(id)
-            .map(produto -> {
-                produto.setName(dto.getNome());
-                return produtoRepository.save(produto);
-            });
+                    .map(produto -> {
+                        produto.setName(dto.getNome());
+                        return produtoRepository.save(produto);
+                    });
         }
         return null;
     }
-    
+
+    public boolean delete(Long id) {
+        boolean p = produtoRepository.existsById(id);
+        if (p) {
+            produtoRepository.deleteById(id);
+        }
+        return p;
+    }
+
 }

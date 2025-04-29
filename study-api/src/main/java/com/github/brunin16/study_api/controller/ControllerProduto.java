@@ -1,6 +1,7 @@
 package com.github.brunin16.study_api.controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.github.brunin16.study_api.dto.ProdutoRequestCreate;
 import com.github.brunin16.study_api.dto.ProdutoRequestUpdate;
-import com.github.brunin16.study_api.model.Produto;
+import com.github.brunin16.study_api.dto.ProdutoResponse;
 import com.github.brunin16.study_api.service.ProdutoService;
 
 @RestController
@@ -26,34 +27,50 @@ public class ControllerProduto {
     private ProdutoService produtoService;
 
     @PostMapping
-    public ResponseEntity<Produto> create(@RequestBody ProdutoRequestCreate dto) {
-        Produto produto = produtoService.save(dto);
-
-        return  ResponseEntity.status(201).body(produto);
+    public ResponseEntity<ProdutoResponse> create(@RequestBody ProdutoRequestCreate dto) {
+        ProdutoResponse produto = new ProdutoResponse(produtoService.save(dto));
+        return ResponseEntity.status(201).body(produto);
     }
 
     @PutMapping("({id})")
-    public ResponseEntity<Produto> update(@PathVariable Long id,@RequestBody ProdutoRequestUpdate dto) {
+    public ResponseEntity<ProdutoResponse> update(@PathVariable Long id, @RequestBody ProdutoRequestUpdate dto) {
         return produtoService.update(id, dto)
-        .map( produto -> {
-         return ResponseEntity.status(200).body(produto);
-        }).orElse(ResponseEntity.notFound().build());
+                .map(produto -> {
+                    ProdutoResponse response = new ProdutoResponse(produto);
+                    return ResponseEntity.ok(response);
+                })
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping
-    public ResponseEntity<List<Produto>> findAll() {
-        return ResponseEntity.ok(produtoService.findAll());
+    public ResponseEntity<List<ProdutoResponse>> findAll() {
+        List<ProdutoResponse> l = produtoService.findAll()
+                .stream()
+                .map(produto -> {
+                    ProdutoResponse response = new ProdutoResponse(produto);
+                    return response;
+                })
+                .collect(Collectors.toList());
+        return ResponseEntity.ok(l);
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<Produto> findById(@PathVariable Long id) {
-        Produto produto = produtoService.findById(id);
-        return ResponseEntity.status(200).body(produto);
+    public ResponseEntity<ProdutoResponse> findById(@PathVariable Long id) {
+        return produtoService.findById(id)
+                .map(produto -> {
+                    ProdutoResponse response = new ProdutoResponse(produto);
+                    return ResponseEntity.ok(response);
+                })
+                .orElse(ResponseEntity.notFound().build());
     }
 
-    @DeleteMapping
-    public ResponseEntity<Void> delete() {
-        return ResponseEntity.status(204).build();
+    @DeleteMapping("{id}")
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        if (produtoService.delete(id)) {
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
-    
+
 }
